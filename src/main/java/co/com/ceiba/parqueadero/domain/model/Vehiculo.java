@@ -97,4 +97,40 @@ public abstract class Vehiculo implements Serializable {
 		this.registros = registros;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 22 : id.hashCode());
+		result = prime * result + ((placa == null) ? 12 : placa.hashCode());
+		result = prime * result + ((tipo == null) ? 48 : tipo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Vehiculo other = (Vehiculo) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (placa == null) {
+			if (other.placa != null)
+				return false;
+		} else if (!placa.equals(other.placa))
+			return false;
+		if (tipo != other.tipo)
+			return false;
+		return true;
+	}
+	
+	
+
 }

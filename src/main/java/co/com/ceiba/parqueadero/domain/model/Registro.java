@@ -117,4 +117,36 @@ public class Registro implements Serializable {
 		this.vehiculo = vehiculo;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 48;
+		int result = 3;
+		result = prime * result + ((horaIngreso == null) ? 15 : horaIngreso.hashCode());
+		result = prime * result + ((vehiculo == null) ? 74 : vehiculo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Registro other = (Registro) obj;
+		if (horaIngreso == null) {
+			if (other.horaIngreso != null)
+				return false;
+		} else if (!horaIngreso.equals(other.horaIngreso))
+			return false;
+		if (vehiculo == null) {
+			if (other.vehiculo != null)
+				return false;
+		} else if (!vehiculo.equals(other.vehiculo))
+			return false;
+		return true;
+	}
+
+	
 }
