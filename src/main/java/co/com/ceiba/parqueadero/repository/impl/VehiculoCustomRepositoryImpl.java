@@ -38,5 +38,4 @@ public class VehiculoCustomRepositoryImpl implements VehiculoCustomRepository {
 		TypedQuery<?> query = getEntityManager().createQuery(criteriaQuery);
 		return (Long) query.getSingleResult();
 	}
-
 }

@@ -4,7 +4,9 @@ import co.com.ceiba.parqueadero.domain.model.Carro;
 
 public class CarroTestDataBuilder {
 
-	private static final String PLACA_DEFAULT = "FHT358";
+	public static final String PLACA_DEFAULT = "FHT358";
+
+	private Long id;
 
 	private String placa;
 
@@ -17,8 +19,15 @@ public class CarroTestDataBuilder {
 		return this;
 	}
 
+	public CarroTestDataBuilder withId(Long id) {
+		this.id = id;
+		return this;
+	}
+
 	public Carro build() {
-		return new Carro(this.placa);
+		Carro carro = new Carro(this.placa);
+		carro.setId(id);
+		return carro;
 	}
 
 }

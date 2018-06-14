@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.com.ceiba.parqueadero.business.PropiedadService;
-import co.com.ceiba.parqueadero.business.validation.PlacaValidator;
+import co.com.ceiba.parqueadero.business.validation.PicoPlacaValidator;
 import co.com.ceiba.parqueadero.util.DateProvider;
 import co.com.ceiba.parqueadero.util.PropiedadConstants;
 import co.com.ceiba.parqueadero.util.PropiedadUtil;
 
 @Service
-public class PlacaValidatorImpl implements PlacaValidator {
+public class PicoPlacaValidatorImpl implements PicoPlacaValidator {
 
 	private PropiedadService propiedadService;
 

@@ -10,7 +10,7 @@ import co.com.ceiba.parqueadero.business.PropiedadService;
 import co.com.ceiba.parqueadero.business.VigilanteService;
 import co.com.ceiba.parqueadero.business.exception.BusinessException;
 import co.com.ceiba.parqueadero.business.exception.ExceptionConstants;
-import co.com.ceiba.parqueadero.business.validation.PlacaValidator;
+import co.com.ceiba.parqueadero.business.validation.PicoPlacaValidator;
 import co.com.ceiba.parqueadero.domain.model.Registro;
 import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 import co.com.ceiba.parqueadero.repository.RegistroRepository;
@@ -26,7 +26,7 @@ public class VigilanteServiceimpl implements VigilanteService {
 
 	private PropiedadService propiedadService;
 
-	private PlacaValidator placaValidator;
+	private PicoPlacaValidator placaValidator;
 
 	private RegistroRepository registroRepository;
 
@@ -59,12 +59,12 @@ public class VigilanteServiceimpl implements VigilanteService {
 		this.propiedadService = propiedadService;
 	}
 
-	protected PlacaValidator getPlacaValidator() {
+	protected PicoPlacaValidator getPlacaValidator() {
 		return placaValidator;
 	}
 
 	@Autowired
-	public void setPlacaValidator(PlacaValidator placaValidator) {
+	public void setPlacaValidator(PicoPlacaValidator placaValidator) {
 		this.placaValidator = placaValidator;
 	}
 

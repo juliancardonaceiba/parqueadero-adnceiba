@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import co.com.ceiba.parqueadero.business.exception.BusinessException;
 import co.com.ceiba.parqueadero.business.exception.ExceptionConstants;
 import co.com.ceiba.parqueadero.business.impl.VigilanteServiceimpl;
-import co.com.ceiba.parqueadero.business.validation.PlacaValidator;
+import co.com.ceiba.parqueadero.business.validation.PicoPlacaValidator;
 import co.com.ceiba.parqueadero.domain.model.Carro;
 import co.com.ceiba.parqueadero.domain.model.Moto;
 import co.com.ceiba.parqueadero.domain.model.Registro;
@@ -49,7 +49,7 @@ public class VigilanteServiceTest {
 	private PropiedadService propiedadService;
 
 	@Mock
-	private PlacaValidator placaValidator;
+	private PicoPlacaValidator placaValidator;
 	
 	@Mock
 	private DateProvider dateProvider;
@@ -58,7 +58,7 @@ public class VigilanteServiceTest {
 	private VigilanteService vigilanteService = new VigilanteServiceimpl();
 
 	@Test
-	public void registarEntradaConCantidadMaximaCarros() {
+	public void registarEntradaConCantidadMaximaCarrosTest() {
 		// Arrange
 		boolean cantidadMaximaCarrosExcedida = Boolean.FALSE;
 		Carro carro = new CarroTestDataBuilder().build();
@@ -80,7 +80,7 @@ public class VigilanteServiceTest {
 	}
 
 	@Test
-	public void registarEntradaConCantidadMaximaMotos() {
+	public void registarEntradaConCantidadMaximaMotosTest() {
 		// Arrange
 		String mensjaeCantidadMaximaMotosExcedida = null;
 		Moto moto = new MotoTestDataBuilder().build();

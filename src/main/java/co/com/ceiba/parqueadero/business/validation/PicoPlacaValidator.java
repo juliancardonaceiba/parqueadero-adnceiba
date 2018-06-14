@@ -1,6 +1,6 @@
 package co.com.ceiba.parqueadero.business.validation;
 
-public interface PlacaValidator {
+public interface PicoPlacaValidator {
 
 	public boolean validate(String placa);
 }

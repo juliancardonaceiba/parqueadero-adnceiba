@@ -4,8 +4,10 @@ import co.com.ceiba.parqueadero.domain.model.Moto;
 
 public class MotoTestDataBuilder {
 
-	private static final String PLACA_DEFAULT = "KNR127";
+	public static final String PLACA_DEFAULT = "KNR127";
 	private static final Integer CILINDRAJE_DEFAULT = 125;
+
+	private Long id;
 
 	private String placa;
 
@@ -21,12 +23,21 @@ public class MotoTestDataBuilder {
 		return this;
 	}
 
-	public void withCilindraje(Integer cilindraje) {
+	public MotoTestDataBuilder withId(Long id) {
+		this.id = id;
+		return this;
+
+	}
+
+	public MotoTestDataBuilder withCilindraje(Integer cilindraje) {
 		this.cilindraje = cilindraje;
+		return this;
 	}
 
 	public Moto build() {
-		return new Moto(this.placa, this.cilindraje);
+		Moto moto = new Moto(this.placa, this.cilindraje);
+		moto.setId(id);
+		return moto;
 	}
 
 }
