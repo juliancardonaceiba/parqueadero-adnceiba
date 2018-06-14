@@ -11,16 +11,20 @@ public interface PropiedadService {
 	public String getProperty(String key);
 
 	public default Long getPropertyAsLong(String key) {
-		return Long.parseLong(getProperty(key));
+		String property = getProperty(key);
+		return property != null ? Long.parseLong(property) : null;
 	}
 
 	public default Integer getPropertyAsInt(String key) {
-		return Integer.parseInt(getProperty(key));
+		String property = getProperty(key);
+		return property != null ? Integer.parseInt(property) : null;
 	}
 
 	public default List<String> getPropertyAsList(String key) {
 		String property = getProperty(key);
-		return Stream.of(property.split(PropiedadConstants.PROPERTY_SEPARATOR)).collect(Collectors.toList());
+		return property != null
+				? Stream.of(property.split(PropiedadConstants.PROPERTY_SEPARATOR)).collect(Collectors.toList())
+				: null;
 	}
 
 }

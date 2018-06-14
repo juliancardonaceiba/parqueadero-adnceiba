@@ -79,6 +79,9 @@ public class VigilanteServiceimpl implements VigilanteService {
 
 	@Override
 	public Registro registrarEntrada(Vehiculo vehiculo) {
+		if(vehiculo==null) {
+			throw new BusinessException(ExceptionConstants.MSG_VEHICULO_ES_REQUERIDO);
+		}
 		Long cantidadVehiculos = getVehiculoRepository().contarCantidadVehiculos(vehiculo.getClass());
 		String claveCantidadMaximaVehiculo = PropiedadUtil.getClaveConComodin(
 				vehiculo.getClass().getSimpleName().toLowerCase(), PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
