@@ -33,9 +33,10 @@ public class VehiculoCustomRepositoryImpl implements VehiculoCustomRepository {
 		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery();
 		Root<? extends Vehiculo> root = criteriaQuery.from(tipoVehiculo);
 		ListJoin<? extends Vehiculo, Registro> joinRegistros = root.join(Vehiculo_.registros);
-		criteriaQuery.where(criteriaBuilder.isNotNull(joinRegistros.get(Registro_.horaSalida)));
+		criteriaQuery.where(criteriaBuilder.isNull(joinRegistros.get(Registro_.horaSalida)));
 		criteriaQuery.multiselect(criteriaBuilder.count(root.get(Vehiculo_.id)));		
 		TypedQuery<?> query = getEntityManager().createQuery(criteriaQuery);
 		return (Long) query.getSingleResult();
 	}
+	
 }

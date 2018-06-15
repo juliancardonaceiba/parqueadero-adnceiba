@@ -37,6 +37,7 @@ public class VehiculoServiceImpl<T extends Vehiculo> implements VehiculoService<
 	}
 
 	protected void validarPlaca(String placa) {
+		//TODO Hacer Validator
 		if (StringUtils.isBlank(placa)) {
 			throw new BusinessException(ExceptionConstants.MSG_PLACA_ES_REQUERIDA);
 		}

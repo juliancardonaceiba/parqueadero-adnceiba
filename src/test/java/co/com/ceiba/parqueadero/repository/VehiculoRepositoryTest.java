@@ -8,6 +8,7 @@
 //import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.test.context.junit4.SpringRunner;
 //
+//import co.com.ceiba.parqueadero.business.VigilanteService;
 //import co.com.ceiba.parqueadero.domain.model.Carro;
 //import co.com.ceiba.parqueadero.domain.model.Moto;
 //
@@ -16,15 +17,18 @@
 //public class VehiculoRepositoryTest {
 //	
 //	@Autowired
-//	private VehiculoRepository vehiculoRepository; 
+//	private VigilanteService vigilanteService; 
 // 	
+//	@Autowired
+//	private VehiculoRepository vehiculoRepository;
+//	
 //	@Test
 //	public void createVehiculoTest() {
-//		vehiculoRepository.save(new Moto("FPH78D", 125));
-//		vehiculoRepository.save(new Moto("FPH79D", 126));
-//		vehiculoRepository.save(new Carro("FDS75H"));
-//		vehiculoRepository.save(new Carro("FDS76H"));
-//		vehiculoRepository.save(new Carro("FDS77H"));
+//		vigilanteService.registrarEntrada(new Moto("FPH78D", 125));
+//		vigilanteService.registrarEntrada(new Moto("FPH79D", 126));
+//		vigilanteService.registrarEntrada(new Carro("FDS75H"));
+//		vigilanteService.registrarEntrada(new Carro("FDS76H"));
+//		vigilanteService.registrarEntrada(new Carro("FDS77H"));
 //		
 //		Long contarCantidadMotos = vehiculoRepository.contarCantidadVehiculos(Moto.class);
 //		Long contarCantidadCarros = vehiculoRepository.contarCantidadVehiculos(Carro.class);
