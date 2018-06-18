@@ -1,5 +1,6 @@
 package co.com.ceiba.parqueadero.business;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,6 +26,11 @@ public interface PropiedadService {
 		return property != null
 				? Stream.of(property.split(PropiedadConstants.PROPERTY_SEPARATOR)).collect(Collectors.toList())
 				: null;
+	}
+	
+	public default BigDecimal getPropertyAsBigDecimal(String key) {
+		String property = getProperty(key);
+		return property != null ? new BigDecimal(property) : null;
 	}
 
 }

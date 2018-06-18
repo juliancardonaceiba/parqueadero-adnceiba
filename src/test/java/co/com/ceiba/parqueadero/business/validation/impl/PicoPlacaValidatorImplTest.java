@@ -1,4 +1,4 @@
-package co.com.ceiba.parqueadero.business.validation;
+package co.com.ceiba.parqueadero.business.validation.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import co.com.ceiba.parqueadero.business.PropiedadService;
+import co.com.ceiba.parqueadero.business.validation.PicoPlacaValidator;
 import co.com.ceiba.parqueadero.business.validation.impl.PicoPlacaValidatorImpl;
 import co.com.ceiba.parqueadero.util.DateProvider;
 import co.com.ceiba.parqueadero.util.PropiedadConstants;
@@ -25,7 +26,7 @@ import co.com.ceiba.parqueadero.util.PropiedadUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-public class PicoPlacaValidatorTest {
+public class PicoPlacaValidatorImplTest {
 
 	private static final String PLACA_VALIDA_SUNDAY = "AJH856";
 	private static final String PLACA_INVALIDA_SUNDAY = "MFD856";
