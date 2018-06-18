@@ -4,15 +4,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import co.com.ceiba.parqueadero.business.PropiedadService;
+import co.com.ceiba.parqueadero.business.exception.BusinessException;
+import co.com.ceiba.parqueadero.business.exception.ExceptionConstants;
 import co.com.ceiba.parqueadero.business.validation.PicoPlacaValidator;
 import co.com.ceiba.parqueadero.util.DateProvider;
 import co.com.ceiba.parqueadero.util.PropiedadConstants;
 import co.com.ceiba.parqueadero.util.PropiedadUtil;
 
-@Service
+@Component
 public class PicoPlacaValidatorImpl implements PicoPlacaValidator {
 
 	private PropiedadService propiedadService;
@@ -38,13 +40,15 @@ public class PicoPlacaValidatorImpl implements PicoPlacaValidator {
 	}
 
 	@Override
-	public boolean validate(String placa) {
+	public void validate(String placa) {
 		LocalDate fechaActual = getDateProvider().getCurrentLocalDate();
 		String claveInicialesNoPermitidas = PropiedadUtil.getClaveConComodin(
 				fechaActual.getDayOfWeek().name().toLowerCase(),
 				PropiedadConstants.INICIALES_PLACAS_NO_PERMITIDAS_POR_DIA);
 		List<String> inicialesNoPermitidas = getPropiedadService().getPropertyAsList(claveInicialesNoPermitidas);
-		return !inicialesNoPermitidas.contains(String.valueOf(placa.charAt(0)));
+		if (inicialesNoPermitidas.contains(String.valueOf(placa.charAt(0)))) {
+			throw new BusinessException(ExceptionConstants.MSG_PLACA_NO_PERMITIDA_ESTE_DIA);
+		}
 	}
 
 }

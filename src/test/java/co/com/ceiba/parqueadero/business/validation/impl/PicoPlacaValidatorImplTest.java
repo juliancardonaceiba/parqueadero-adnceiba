@@ -1,7 +1,6 @@
 package co.com.ceiba.parqueadero.business.validation.impl;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,8 +17,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import co.com.ceiba.parqueadero.business.PropiedadService;
+import co.com.ceiba.parqueadero.business.exception.BusinessException;
+import co.com.ceiba.parqueadero.business.exception.ExceptionConstants;
 import co.com.ceiba.parqueadero.business.validation.PicoPlacaValidator;
-import co.com.ceiba.parqueadero.business.validation.impl.PicoPlacaValidatorImpl;
 import co.com.ceiba.parqueadero.util.DateProvider;
 import co.com.ceiba.parqueadero.util.PropiedadConstants;
 import co.com.ceiba.parqueadero.util.PropiedadUtil;
@@ -43,6 +43,7 @@ public class PicoPlacaValidatorImplTest {
 	@Test
 	public void validarPlacaInvalidaEnDiaActualTest() {
 		// Arrange
+		String mensjaePlacaNoPermitida = null;
 		LocalDate fechaSaturday = LocalDate.of(2018, Month.JUNE, 2);
 		when(dateProvider.getCurrentLocalDate()).thenReturn(fechaSaturday);
 		String clavePlacasNoPermitidasDiaActual = PropiedadUtil.getClaveConComodin(DayOfWeek.SATURDAY.name().toLowerCase(),
@@ -50,9 +51,13 @@ public class PicoPlacaValidatorImplTest {
 		when(propiedadService.getPropertyAsList(clavePlacasNoPermitidasDiaActual))
 				.thenReturn(Arrays.asList(String.valueOf(PLACA_VALIDA_SUNDAY.charAt(0))));
 		// Act
-		boolean placaValida = placaValidator.validate(PLACA_VALIDA_SUNDAY);
+		try {
+			placaValidator.validate(PLACA_VALIDA_SUNDAY);
+		} catch (BusinessException e) {
+			mensjaePlacaNoPermitida = e.getMessage();
+		}
 		// Assert
-		assertFalse(placaValida);
+		assertEquals(ExceptionConstants.MSG_PLACA_NO_PERMITIDA_ESTE_DIA, mensjaePlacaNoPermitida);
 		verify(dateProvider).getCurrentLocalDate();
 		verify(propiedadService).getPropertyAsList(clavePlacasNoPermitidasDiaActual);
 	}
@@ -67,9 +72,8 @@ public class PicoPlacaValidatorImplTest {
 		when(propiedadService.getPropertyAsList(clavePlacasPermitidasDiaActual))
 				.thenReturn(Arrays.asList(String.valueOf(PLACA_INVALIDA_SUNDAY.charAt(0))));
 		// Act
-		boolean placaValida = placaValidator.validate(PLACA_VALIDA_SUNDAY);
+		placaValidator.validate(PLACA_VALIDA_SUNDAY);
 		// Assert
-		assertTrue(placaValida);
 		verify(dateProvider).getCurrentLocalDate();
 		verify(propiedadService).getPropertyAsList(clavePlacasPermitidasDiaActual);
 	}

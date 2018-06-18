@@ -3,7 +3,6 @@ package co.com.ceiba.parqueadero.domain.model;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -48,8 +47,6 @@ public abstract class Vehiculo implements Serializable {
 
 	private String placa;
 
-	private TipoVehiculo tipo;
-
 	private List<Registro> registros;
 
 	public Vehiculo() {
@@ -80,18 +77,8 @@ public abstract class Vehiculo implements Serializable {
 		this.placa = placa;
 	}
 
-//	@Enumerated(EnumType.STRING)
-//	@Column(name = TableInfo.TIPO_VEHICULO_NAME, insertable = TableInfo.TIPO_VEHICULO_INSERTABLE, updatable = TableInfo.TIPO_VEHICULO_UPDATABLE)
-//	public TipoVehiculo getTipo() {
-//		return tipo;
-//	}
-//
-//	public void setTipo(TipoVehiculo tipo) {
-//		this.tipo = tipo;
-//	}
-
 	@JsonIgnore
-	@OneToMany(mappedBy = Registro.EntityInfo.VEHICULO_NAME, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = Registro.EntityInfo.VEHICULO_NAME, fetch = FetchType.LAZY)
 	public List<Registro> getRegistros() {
 		return registros;
 	}

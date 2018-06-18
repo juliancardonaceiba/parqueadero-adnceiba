@@ -1,40 +1,27 @@
 package co.com.ceiba.parqueadero.business;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import co.com.ceiba.parqueadero.business.exception.BusinessException;
 import co.com.ceiba.parqueadero.business.exception.ExceptionConstants;
 import co.com.ceiba.parqueadero.business.impl.CarroServiceImpl;
-import co.com.ceiba.parqueadero.business.validation.VehiculoValidator;
 import co.com.ceiba.parqueadero.domain.model.Carro;
-import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 import co.com.ceiba.parqueadero.domain.model.builder.CarroTestDataBuilder;
-import co.com.ceiba.parqueadero.repository.VehiculoRepository;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
-public class CarroServiceTest {
+public class CarroServiceITest {
 
-	@Mock
-	private VehiculoRepository vehiculoRepository;
-
-	@Mock
-	private VehiculoValidator<Carro> vehiculoValidator;
-
-	@InjectMocks
+	@Autowired
 	private CarroService carroService = new CarroServiceImpl();
 
 	@Test
@@ -52,24 +39,8 @@ public class CarroServiceTest {
 	}
 
 	@Test
-	public void obtenerCarroConPlacaCorrectaTest() {
-		// Arrange
-		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(vehiculoRepository.findByPlaca(CarroTestDataBuilder.PLACA_DEFAULT)).thenReturn(Optional.ofNullable(carro));
-		// Act
-		Optional<Vehiculo> vehiculo = carroService.getVehiculo(CarroTestDataBuilder.PLACA_DEFAULT);
-		// Assert
-		boolean vehiculoExiste = vehiculo.isPresent()
-				&& CarroTestDataBuilder.PLACA_DEFAULT.equals(vehiculo.get().getPlaca());
-		assertTrue(vehiculoExiste);
-		verify(vehiculoRepository).findByPlaca(CarroTestDataBuilder.PLACA_DEFAULT);
-	}
-
-	@Test
 	public void crearCarroConCarroNullTest() {
 		// Arrange
-		doThrow(new BusinessException(ExceptionConstants.MSG_VEHICULO_ES_REQUERIDO)).when(vehiculoValidator)
-				.validate(null);
 		boolean mensajeVehiculoEsRequerida = Boolean.FALSE;
 		// Act
 		try {
@@ -85,8 +56,6 @@ public class CarroServiceTest {
 	public void crearCarroConPlacaNullTest() {
 		// Arrange
 		Carro carro = new CarroTestDataBuilder().withPlaca(null).build();
-		doThrow(new BusinessException(ExceptionConstants.MSG_PLACA_ES_REQUERIDA)).when(vehiculoValidator)
-				.validate(carro);
 		boolean mensajePlacaEsRequerida = Boolean.FALSE;
 		// Act
 		try {
@@ -101,11 +70,7 @@ public class CarroServiceTest {
 	@Test
 	public void crearCarroConCarroOKTest() {
 		// Arrange
-		
 		Carro carro = new CarroTestDataBuilder().build();
-		doNothing().when(vehiculoValidator).validate(carro);
-		Carro carroNuevo = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(vehiculoRepository.save(carro)).thenReturn(carroNuevo);
 		// Act
 		Carro nuevoVehiculo = carroService.crearVehiculo(carro);
 		// Assert

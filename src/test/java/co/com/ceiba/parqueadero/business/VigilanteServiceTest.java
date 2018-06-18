@@ -3,6 +3,8 @@ package co.com.ceiba.parqueadero.business;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -90,7 +92,7 @@ public class VigilanteServiceTest {
 	public void registarEntradaConCantidadMaximaCarrosTest() {
 		// Arrange
 		boolean cantidadMaximaCarrosExcedida = Boolean.FALSE;
-		Carro carro = new CarroTestDataBuilder().build();
+		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.contarCantidadVehiculos(Carro.class)).thenReturn(CANTIDAD_MAXIMA_CARROS_PERMITIDOS);
 		String claveCantidadMaximaCarros = PropiedadUtil.getClaveConComodin(Carro.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
@@ -112,7 +114,7 @@ public class VigilanteServiceTest {
 	public void registarEntradaConCantidadMaximaMotosTest() {
 		// Arrange
 		String mensjaeCantidadMaximaMotosExcedida = null;
-		Moto moto = new MotoTestDataBuilder().build();
+		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.contarCantidadVehiculos(Moto.class)).thenReturn(CANTIDAD_MAXIMA_MOTOS_PERMITIDOS);
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
@@ -134,14 +136,15 @@ public class VigilanteServiceTest {
 	public void registarEntradaConPlacaNoPermitidaEnElDiaTest() {
 		// Arrange
 		String mensjaePlacaNoPermitida = null;
-		Moto moto = new MotoTestDataBuilder().build();
+		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.contarCantidadVehiculos(Moto.class)).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaMotos))
 				.thenReturn(CANTIDAD_MAXIMA_MOTOS_PERMITIDOS.intValue());
 
-		when(placaValidator.validate(moto.getPlaca())).thenReturn(Boolean.FALSE);
+		doThrow(new BusinessException(ExceptionConstants.MSG_PLACA_NO_PERMITIDA_ESTE_DIA)).when(placaValidator)
+				.validate(moto.getPlaca());
 		// Act
 		try {
 			vigilanteService.registrarEntrada(moto);
@@ -158,13 +161,13 @@ public class VigilanteServiceTest {
 	@Test
 	public void registarEntradaMotoOkTest() {
 		// Arrange
-		Moto moto = new MotoTestDataBuilder().build();
+		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.contarCantidadVehiculos(Moto.class)).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaMotos))
 				.thenReturn(CANTIDAD_MAXIMA_MOTOS_PERMITIDOS.intValue());
-		when(placaValidator.validate(moto.getPlaca())).thenReturn(Boolean.TRUE);
+		doNothing().when(placaValidator).validate(moto.getPlaca());
 		LocalDateTime fechaActual = LocalDateTime.of(2018, Month.JUNE, 5, 9, 0);
 		when(dateProvider.getCurrentLocalDateTime()).thenReturn(fechaActual);
 		Registro registro = new Registro(moto, fechaActual);
@@ -185,13 +188,13 @@ public class VigilanteServiceTest {
 	@Test
 	public void registarEntradaCarroOkTest() {
 		// Arrange
-		Carro carro = new CarroTestDataBuilder().build();
+		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.contarCantidadVehiculos(Carro.class)).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaCarros = PropiedadUtil.getClaveConComodin(Carro.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaCarros))
 				.thenReturn(CANTIDAD_MAXIMA_CARROS_PERMITIDOS.intValue());
-		when(placaValidator.validate(carro.getPlaca())).thenReturn(Boolean.TRUE);
+		doNothing().when(placaValidator).validate(carro.getPlaca());
 		LocalDateTime fechaActual = LocalDateTime.of(2018, Month.JUNE, 5, 9, 0);
 		when(dateProvider.getCurrentLocalDateTime()).thenReturn(fechaActual);
 		Registro registro = new Registro(carro, fechaActual);

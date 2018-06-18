@@ -3,11 +3,11 @@ package co.com.ceiba.parqueadero.util.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import co.com.ceiba.parqueadero.util.DateProvider;
 
-@Service
+@Component
 public class DateProviderImpl implements DateProvider {
 
 	private LocalDateTime localDateTime;

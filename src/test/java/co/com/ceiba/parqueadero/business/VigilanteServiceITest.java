@@ -50,6 +50,12 @@ public class VigilanteServiceITest {
 	private VigilanteService vigilanteService;
 
 	@Autowired
+	private VehiculoService<Carro> carroService;
+
+	@Autowired
+	private VehiculoService<Moto> motoService;
+
+	@Autowired
 	private RecargoRepository recargoRepository;
 
 	@Test
@@ -57,8 +63,10 @@ public class VigilanteServiceITest {
 		// Arrange
 		boolean cantidadMaximaCarrosExcedida = Boolean.FALSE;
 		Carro carro = new CarroTestDataBuilder().build();
+		carro = carroService.crearVehiculo(carro);
 		for (int i = 0; i < CANTIDAD_MAXIMA_CARROS_PERMITIDOS; i++) {
 			Carro carroTest = new CarroTestDataBuilder().withPlaca(LETRAS_PLACA + i).build();
+			carroTest = carroService.crearVehiculo(carroTest);
 			vigilanteService.registrarEntrada(carroTest);
 		}
 		// Act
@@ -76,8 +84,10 @@ public class VigilanteServiceITest {
 		// Arrange
 		String mensjaeCantidadMaximaMotosExcedida = null;
 		Moto moto = new MotoTestDataBuilder().build();
+		moto = motoService.crearVehiculo(moto);
 		for (int i = 0; i < CANTIDAD_MAXIMA_MOTOS_PERMITIDOS; i++) {
 			Moto motoTest = new MotoTestDataBuilder().withPlaca(LETRAS_PLACA + i).build();
+			motoTest = motoService.crearVehiculo(motoTest);
 			vigilanteService.registrarEntrada(motoTest);
 		}
 		// Act
@@ -94,7 +104,7 @@ public class VigilanteServiceITest {
 	public void registarEntradaConPlacaNoPermitidaEnElDiaTest() {
 		// Arrange
 		String mensjaePlacaNoPermitida = null;
-		Moto moto = new MotoTestDataBuilder().withPlaca(PLACA_NO_PERMITIDA).build();
+		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).withPlaca(PLACA_NO_PERMITIDA).build();
 		// Act
 		try {
 			vigilanteService.registrarEntrada(moto);
@@ -109,6 +119,7 @@ public class VigilanteServiceITest {
 	public void registarEntradaMotoOkTest() {
 		// Arrange
 		Moto moto = new MotoTestDataBuilder().build();
+		moto = motoService.crearVehiculo(moto);
 		// Act
 		Registro registroPersistent = vigilanteService.registrarEntrada(moto);
 		boolean registroGuardado = registroPersistent != null && registroPersistent.getId() != null;
@@ -120,6 +131,7 @@ public class VigilanteServiceITest {
 	public void registarEntradaCarroOkTest() {
 		// Arrange
 		Carro carro = new CarroTestDataBuilder().build();
+		carro = carroService.crearVehiculo(carro);
 		// Act
 		Registro registroPersistent = vigilanteService.registrarEntrada(carro);
 		boolean registroGuardado = registroPersistent != null && registroPersistent.getId() != null;
@@ -161,7 +173,7 @@ public class VigilanteServiceITest {
 	}
 
 	@Test
-	public void calcularValorMotoConrecargoUnDiaTresHorasTest() {
+	public void calcularValorMotoConRecargoUnDiaTresHorasTest() {
 		// Arrange
 		Recargo recargo = new RecargoTestDataBuilder().build();
 		Moto moto = new MotoTestDataBuilder().withCilindraje(recargo.getCilindrajeMinimo()).build();
@@ -170,7 +182,8 @@ public class VigilanteServiceITest {
 		BigDecimal valor = vigilanteService.calcularValor(moto, FECHA_INICIO_COBRO_UN_DIA_TRES_HORAS,
 				FECHA_FIN_COBRO_UN_DIA_TRES_HORAS);
 		// Assert
-		assertEquals(VALOR_UN_DIA_TRES_HORAS_MOTO.add(recargo.getValorRecargado()).compareTo(valor), BigDecimal.ZERO.intValue());
+		assertEquals(VALOR_UN_DIA_TRES_HORAS_MOTO.add(recargo.getValorRecargado()).compareTo(valor),
+				BigDecimal.ZERO.intValue());
 	}
 
 }

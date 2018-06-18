@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -107,7 +106,7 @@ public class Registro implements Serializable {
 		this.valor = valor;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = TableInfo.VEHICULO_NAME, nullable = TableInfo.VEHICULO_NULLABLE)
 	public Vehiculo getVehiculo() {
 		return vehiculo;

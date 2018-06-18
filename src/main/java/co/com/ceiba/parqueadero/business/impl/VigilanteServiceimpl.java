@@ -110,9 +110,9 @@ public class VigilanteServiceImpl implements VigilanteService {
 		if (cantidadVehiculos >= cantidadMaximaPermitidad) {
 			throw new BusinessException(ExceptionConstants.MSG_CANTIDAD_MAXIMA_VEHICULOS);
 		}
-		if (!getPlacaValidator().validate(vehiculo.getPlaca())) {
-			throw new BusinessException(ExceptionConstants.MSG_PLACA_NO_PERMITIDA_ESTE_DIA);
-		}
+		
+		getPlacaValidator().validate(vehiculo.getPlaca());			
+		
 		Registro registro = new Registro(vehiculo, getDateProvider().getCurrentLocalDateTime());
 		registro = getRegistroRepository().save(registro);
 		return registro;
@@ -141,7 +141,7 @@ public class VigilanteServiceImpl implements VigilanteService {
 		BigDecimal valorHora = getPropiedadService().getPropertyAsBigDecimal(claveValorHora);
 		Long numeroHorasInicioCobroDia = getPropiedadService()
 				.getPropertyAsLong(PropiedadConstants.NUMERO_HORAS_INICIO_COBRO_DIA);
-
+		//TODO sacar calculo de días y horas en componente aparte
 		Duration between = Duration.between(fechaIngreso, fechaSalida);
 		long numeroDias = between.toDays();
 		between = between.minusDays(numeroDias);
