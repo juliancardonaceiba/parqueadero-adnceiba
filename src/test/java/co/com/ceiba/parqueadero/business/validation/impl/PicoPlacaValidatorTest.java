@@ -26,7 +26,7 @@ import co.com.ceiba.parqueadero.util.PropiedadUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-public class PicoPlacaValidatorImplTest {
+public class PicoPlacaValidatorTest {
 
 	private static final String PLACA_VALIDA_SUNDAY = "AJH856";
 	private static final String PLACA_INVALIDA_SUNDAY = "MFD856";

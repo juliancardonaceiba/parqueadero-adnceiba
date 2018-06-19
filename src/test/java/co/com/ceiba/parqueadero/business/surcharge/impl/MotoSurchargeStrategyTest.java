@@ -26,7 +26,7 @@ import co.com.ceiba.parqueadero.repository.RecargoRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
-public class MotoSurchargeStrategyImplTest {
+public class MotoSurchargeStrategyTest {
 
 	private static final Integer CILINDRAJE_500CC = 500;
 	private static final BigDecimal VALOR_RECARGADO_500CC = BigDecimal.valueOf(2000);

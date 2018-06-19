@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
@@ -46,7 +47,6 @@ public class VigilanteServiceTest {
 
 	private static final Long CANTIDAD_MAXIMA_CARROS_PERMITIDOS = 20L;
 	private static final Long CANTIDAD_MAXIMA_MOTOS_PERMITIDOS = 10L;
-	private static final Long NUMERO_HORAS_INICIO_COBRO_DIA = 9L;
 	private static final BigDecimal VALOR_HORA_MOTO = BigDecimal.valueOf(500);
 	private static final BigDecimal VALOR_DIA_MOTO = BigDecimal.valueOf(4000);
 	private static final BigDecimal VALOR_HORA_CARRO = BigDecimal.valueOf(1000);
@@ -55,9 +55,11 @@ public class VigilanteServiceTest {
 	private static final BigDecimal VALOR_UN_DIA_TRES_HORAS_MOTO = BigDecimal.valueOf(5500);
 	private static final LocalDateTime FECHA_INICIO_COBRO_NUEVE_HORAS = LocalDateTime.of(2018, Month.JUNE, 1, 8, 0);
 	private static final LocalDateTime FECHA_FIN_COBRO_NUEVE_HORAS = LocalDateTime.of(2018, Month.JUNE, 1, 17, 0);
+	private static final Duration DURACION_NUEVE_HORAS = Duration.ofDays(1);
 	private static final LocalDateTime FECHA_INICIO_COBRO_UN_DIA_TRES_HORAS = LocalDateTime.of(2018, Month.JUNE, 1, 8,
 			0);
 	private static final LocalDateTime FECHA_FIN_COBRO_UN_DIA_TRES_HORAS = LocalDateTime.of(2018, Month.JUNE, 2, 10, 3);
+	private static final Duration DURACION_UN_DIA_TRES_HORAS = Duration.ofDays(1).plusHours(3);
 
 	@Mock
 	private VehiculoRepository vehiculoRepository;
@@ -73,6 +75,9 @@ public class VigilanteServiceTest {
 
 	@Mock
 	private DateProvider dateProvider;
+
+	@Mock
+	private CalculadorTiempoService calculadorTiempoService;
 
 	@Mock
 	private SurchargeStrategy motoSurchargeStrategy;
@@ -91,7 +96,7 @@ public class VigilanteServiceTest {
 	@Test
 	public void registarEntradaConCantidadMaximaCarrosTest() {
 		// Arrange
-		boolean cantidadMaximaCarrosExcedida = Boolean.FALSE;
+		String mensjaecantidadMaximaCarrosExcedida = null;
 		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.contarCantidadVehiculos(Carro.class)).thenReturn(CANTIDAD_MAXIMA_CARROS_PERMITIDOS);
 		String claveCantidadMaximaCarros = PropiedadUtil.getClaveConComodin(Carro.class.getSimpleName().toLowerCase(),
@@ -102,10 +107,10 @@ public class VigilanteServiceTest {
 		try {
 			vigilanteService.registrarEntrada(carro);
 		} catch (BusinessException e) {
-			cantidadMaximaCarrosExcedida = ExceptionConstants.MSG_CANTIDAD_MAXIMA_VEHICULOS.equals(e.getMessage());
+			mensjaecantidadMaximaCarrosExcedida = e.getMessage();
 		}
 		// Assert
-		assertTrue(cantidadMaximaCarrosExcedida);
+		assertEquals(ExceptionConstants.MSG_CANTIDAD_MAXIMA_VEHICULOS, mensjaecantidadMaximaCarrosExcedida);
 		verify(vehiculoRepository).contarCantidadVehiculos(Carro.class);
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaCarros);
 	}
@@ -181,8 +186,8 @@ public class VigilanteServiceTest {
 		verify(vehiculoRepository).contarCantidadVehiculos(Moto.class);
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaMotos);
 		verify(placaValidator).validate(moto.getPlaca());
-		verify(registroRepository).save(registro);
 		verify(dateProvider).getCurrentLocalDateTime();
+		verify(registroRepository).save(registro);
 	}
 
 	@Test
@@ -222,14 +227,18 @@ public class VigilanteServiceTest {
 				PropiedadConstants.VALOR_HORA_VEHICULO);
 		when(propiedadService.getPropertyAsBigDecimal(claveValorDia)).thenReturn(VALOR_DIA_MOTO);
 		when(propiedadService.getPropertyAsBigDecimal(claveValorHora)).thenReturn(VALOR_HORA_MOTO);
-		when(propiedadService.getPropertyAsLong(PropiedadConstants.NUMERO_HORAS_INICIO_COBRO_DIA))
-				.thenReturn(NUMERO_HORAS_INICIO_COBRO_DIA);
+		when(calculadorTiempoService.calcularTiempo(FECHA_INICIO_COBRO_NUEVE_HORAS, FECHA_FIN_COBRO_NUEVE_HORAS))
+				.thenReturn(DURACION_NUEVE_HORAS);
 		when(motoSurchargeStrategy.canApply(moto)).thenReturn(Boolean.FALSE);
 		// Act
 		BigDecimal valor = vigilanteService.calcularValor(moto, FECHA_INICIO_COBRO_NUEVE_HORAS,
 				FECHA_FIN_COBRO_NUEVE_HORAS);
 		// Assert
 		assertEquals(VALOR_DIA_MOTO.compareTo(valor), BigDecimal.ZERO.intValue());
+		verify(propiedadService).getPropertyAsBigDecimal(claveValorDia);
+		verify(propiedadService).getPropertyAsBigDecimal(claveValorHora);
+		verify(calculadorTiempoService).calcularTiempo(FECHA_INICIO_COBRO_NUEVE_HORAS,
+				FECHA_FIN_COBRO_NUEVE_HORAS);
 		verify(motoSurchargeStrategy).canApply(moto);
 	}
 
@@ -243,8 +252,8 @@ public class VigilanteServiceTest {
 				PropiedadConstants.VALOR_HORA_VEHICULO);
 		when(propiedadService.getPropertyAsBigDecimal(claveValorDia)).thenReturn(VALOR_DIA_CARRO);
 		when(propiedadService.getPropertyAsBigDecimal(claveValorHora)).thenReturn(VALOR_HORA_CARRO);
-		when(propiedadService.getPropertyAsLong(PropiedadConstants.NUMERO_HORAS_INICIO_COBRO_DIA))
-				.thenReturn(NUMERO_HORAS_INICIO_COBRO_DIA);
+		when(calculadorTiempoService.calcularTiempo(FECHA_INICIO_COBRO_UN_DIA_TRES_HORAS,
+				FECHA_FIN_COBRO_UN_DIA_TRES_HORAS)).thenReturn(DURACION_UN_DIA_TRES_HORAS);
 		when(motoSurchargeStrategy.canApply(carro)).thenReturn(Boolean.FALSE);
 		// Act
 
@@ -252,6 +261,10 @@ public class VigilanteServiceTest {
 				FECHA_FIN_COBRO_UN_DIA_TRES_HORAS);
 		// Assert
 		assertEquals(VALOR_UN_DIA_TRES_HORAS_CARRO.compareTo(valor), BigDecimal.ZERO.intValue());
+		verify(propiedadService).getPropertyAsBigDecimal(claveValorDia);
+		verify(propiedadService).getPropertyAsBigDecimal(claveValorHora);
+		verify(calculadorTiempoService).calcularTiempo(FECHA_INICIO_COBRO_UN_DIA_TRES_HORAS,
+				FECHA_FIN_COBRO_UN_DIA_TRES_HORAS);
 		verify(motoSurchargeStrategy).canApply(carro);
 	}
 
@@ -265,14 +278,18 @@ public class VigilanteServiceTest {
 				PropiedadConstants.VALOR_HORA_VEHICULO);
 		when(propiedadService.getPropertyAsBigDecimal(claveValorDia)).thenReturn(VALOR_DIA_MOTO);
 		when(propiedadService.getPropertyAsBigDecimal(claveValorHora)).thenReturn(VALOR_HORA_MOTO);
-		when(propiedadService.getPropertyAsLong(PropiedadConstants.NUMERO_HORAS_INICIO_COBRO_DIA))
-				.thenReturn(NUMERO_HORAS_INICIO_COBRO_DIA);
+		when(calculadorTiempoService.calcularTiempo(FECHA_INICIO_COBRO_UN_DIA_TRES_HORAS,
+				FECHA_FIN_COBRO_UN_DIA_TRES_HORAS)).thenReturn(DURACION_UN_DIA_TRES_HORAS);
 		when(motoSurchargeStrategy.canApply(moto)).thenReturn(Boolean.FALSE);
 		// Act
 		BigDecimal valor = vigilanteService.calcularValor(moto, FECHA_INICIO_COBRO_UN_DIA_TRES_HORAS,
 				FECHA_FIN_COBRO_UN_DIA_TRES_HORAS);
 		// Assert
 		assertEquals(VALOR_UN_DIA_TRES_HORAS_MOTO.compareTo(valor), BigDecimal.ZERO.intValue());
+		verify(propiedadService).getPropertyAsBigDecimal(claveValorDia);
+		verify(propiedadService).getPropertyAsBigDecimal(claveValorHora);
+		verify(calculadorTiempoService).calcularTiempo(FECHA_INICIO_COBRO_UN_DIA_TRES_HORAS,
+				FECHA_FIN_COBRO_UN_DIA_TRES_HORAS);
 		verify(motoSurchargeStrategy).canApply(moto);
 	}
 

@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.com.ceiba.parqueadero.business.CalculadorTiempoService;
 import co.com.ceiba.parqueadero.business.PropiedadService;
 import co.com.ceiba.parqueadero.business.VigilanteService;
 import co.com.ceiba.parqueadero.business.exception.BusinessException;
@@ -35,6 +36,8 @@ public class VigilanteServiceImpl implements VigilanteService {
 	private RegistroRepository registroRepository;
 
 	private DateProvider dateProvider;
+
+	private CalculadorTiempoService calculadorTiempoService;
 
 	private List<SurchargeStrategy> surchargeStrategies;
 
@@ -83,6 +86,15 @@ public class VigilanteServiceImpl implements VigilanteService {
 		this.dateProvider = dateProvider;
 	}
 
+	public CalculadorTiempoService getCalculadorTiempoService() {
+		return calculadorTiempoService;
+	}
+
+	@Autowired
+	public void setCalculadorTiempoService(CalculadorTiempoService calculadorTiempoService) {
+		this.calculadorTiempoService = calculadorTiempoService;
+	}
+
 	public List<SurchargeStrategy> getSurchargeStrategies() {
 		return surchargeStrategies;
 	}
@@ -110,9 +122,9 @@ public class VigilanteServiceImpl implements VigilanteService {
 		if (cantidadVehiculos >= cantidadMaximaPermitidad) {
 			throw new BusinessException(ExceptionConstants.MSG_CANTIDAD_MAXIMA_VEHICULOS);
 		}
-		
-		getPlacaValidator().validate(vehiculo.getPlaca());			
-		
+
+		getPlacaValidator().validate(vehiculo.getPlaca());
+
 		Registro registro = new Registro(vehiculo, getDateProvider().getCurrentLocalDateTime());
 		registro = getRegistroRepository().save(registro);
 		return registro;
@@ -127,6 +139,7 @@ public class VigilanteServiceImpl implements VigilanteService {
 		registroOptional.ifPresent(registro -> {
 			registro.setHoraSalida(dateProvider.getCurrentLocalDateTime());
 			registro.setValor(calcularValor(vehiculo, registro.getHoraIngreso(), registro.getHoraSalida()));
+			getRegistroRepository().save(registro);
 		});
 		return registroOptional;
 	}
@@ -139,28 +152,12 @@ public class VigilanteServiceImpl implements VigilanteService {
 		String claveValorHora = PropiedadUtil.getClaveConComodin(vehiculo.getClass().getSimpleName().toLowerCase(),
 				PropiedadConstants.VALOR_HORA_VEHICULO);
 		BigDecimal valorHora = getPropiedadService().getPropertyAsBigDecimal(claveValorHora);
-		Long numeroHorasInicioCobroDia = getPropiedadService()
-				.getPropertyAsLong(PropiedadConstants.NUMERO_HORAS_INICIO_COBRO_DIA);
-		//TODO sacar calculo de días y horas en componente aparte
-		Duration between = Duration.between(fechaIngreso, fechaSalida);
-		long numeroDias = between.toDays();
-		between = between.minusDays(numeroDias);
-		long numeroHoras = between.toHours();
-		between = between.minusHours(numeroHoras);
-		long numeroMinutos = between.toMinutes();
-		between = between.minusMinutes(numeroMinutos);
-		long nanos = between.toNanos();
-		if (nanos > 0) {
-			numeroMinutos++;
-		}
-		if (numeroMinutos > 0) {
-			numeroHoras++;
-		}
-		if (numeroHoras >= numeroHorasInicioCobroDia) {
-			numeroDias++;
-			numeroHoras = 0;
-		}
 
+		Duration duration = getCalculadorTiempoService().calcularTiempo(fechaIngreso, fechaSalida);
+
+		long numeroDias = duration.toDays();
+		duration = duration.minusDays(numeroDias);
+		long numeroHoras = duration.toHours();
 		BigDecimal valorTotal = valorDia.multiply(BigDecimal.valueOf(numeroDias));
 		valorTotal = valorTotal.add(valorHora.multiply(BigDecimal.valueOf(numeroHoras)));
 
