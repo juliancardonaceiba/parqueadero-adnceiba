@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.com.ceiba.parqueadero.business.CarroService;
+import co.com.ceiba.parqueadero.business.VehiculoService;
 import co.com.ceiba.parqueadero.business.VigilanteService;
 import co.com.ceiba.parqueadero.domain.dto.RegistroDTO;
 import co.com.ceiba.parqueadero.domain.model.Registro;
@@ -25,7 +25,7 @@ public class RegistroRestController {
 
 	private VigilanteService vigilanteService;
 
-	private CarroService carroService;
+	private VehiculoService vehiculoService;
 
 	private ConversionService conversionService;
 
@@ -38,13 +38,13 @@ public class RegistroRestController {
 		this.vigilanteService = vigilanteService;
 	}
 
-	protected CarroService getCarroService() {
-		return carroService;
+	public VehiculoService getVehiculoService() {
+		return vehiculoService;
 	}
 
 	@Autowired
-	public void setCarroService(CarroService carroService) {
-		this.carroService = carroService;
+	public void setVehiculoService(VehiculoService vehiculoService) {
+		this.vehiculoService = vehiculoService;
 	}
 
 	public ConversionService getConversionService() {
@@ -58,14 +58,14 @@ public class RegistroRestController {
 
 	@PostMapping
 	public RegistroDTO registrarEntrada(@RequestParam("placa") String placa) {
-		Optional<Vehiculo> vehiculo = getCarroService().getVehiculo(placa);
+		Optional<Vehiculo> vehiculo = getVehiculoService().getVehiculoPorPlaca(placa);
 		Registro registroEntrada = getVigilanteService().registrarEntrada(vehiculo.orElse(null));
 		return conversionService.convert(registroEntrada, RegistroDTO.class);
 	}
 
 	@PutMapping
 	public Optional<RegistroDTO> registrarSalida(@RequestParam("placa") String placa) {
-		Optional<Vehiculo> vehiculo = getCarroService().getVehiculo(placa);
+		Optional<Vehiculo> vehiculo = getVehiculoService().getVehiculoPorPlaca(placa);
 		Optional<Registro> registroSalida = getVigilanteService().registrarSalida(vehiculo.orElse(null));
 		if (registroSalida.isPresent()) {
 			RegistroDTO registroDTO = conversionService.convert(registroSalida.get(), RegistroDTO.class);

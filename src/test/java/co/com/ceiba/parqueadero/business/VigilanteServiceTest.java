@@ -14,14 +14,18 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 
 import com.google.common.collect.Lists;
 
@@ -35,8 +39,8 @@ import co.com.ceiba.parqueadero.domain.model.Moto;
 import co.com.ceiba.parqueadero.domain.model.Registro;
 import co.com.ceiba.parqueadero.domain.model.builder.CarroTestDataBuilder;
 import co.com.ceiba.parqueadero.domain.model.builder.MotoTestDataBuilder;
+import co.com.ceiba.parqueadero.repository.AbstractVehiculoRepository;
 import co.com.ceiba.parqueadero.repository.RegistroRepository;
-import co.com.ceiba.parqueadero.repository.VehiculoRepository;
 import co.com.ceiba.parqueadero.util.DateProvider;
 import co.com.ceiba.parqueadero.util.PropiedadConstants;
 import co.com.ceiba.parqueadero.util.PropiedadUtil;
@@ -61,8 +65,12 @@ public class VigilanteServiceTest {
 	private static final LocalDateTime FECHA_FIN_COBRO_UN_DIA_TRES_HORAS = LocalDateTime.of(2018, Month.JUNE, 2, 10, 3);
 	private static final Duration DURACION_UN_DIA_TRES_HORAS = Duration.ofDays(1).plusHours(3);
 
+	@SuppressWarnings("rawtypes")
 	@Mock
-	private VehiculoRepository vehiculoRepository;
+	private AbstractVehiculoRepository vehiculoRepository;
+
+	@Mock
+	private ApplicationContext context;
 
 	@Mock
 	private RegistroRepository registroRepository;
@@ -98,7 +106,10 @@ public class VigilanteServiceTest {
 		// Arrange
 		String mensjaecantidadMaximaCarrosExcedida = null;
 		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(vehiculoRepository.contarCantidadVehiculos(Carro.class)).thenReturn(CANTIDAD_MAXIMA_CARROS_PERMITIDOS);
+		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(CANTIDAD_MAXIMA_CARROS_PERMITIDOS);
+		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+				.thenReturn(new String[] { StringUtils.EMPTY });
+		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
 		String claveCantidadMaximaCarros = PropiedadUtil.getClaveConComodin(Carro.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaCarros))
@@ -111,7 +122,7 @@ public class VigilanteServiceTest {
 		}
 		// Assert
 		assertEquals(ExceptionConstants.MSG_CANTIDAD_MAXIMA_VEHICULOS, mensjaecantidadMaximaCarrosExcedida);
-		verify(vehiculoRepository).contarCantidadVehiculos(Carro.class);
+		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaCarros);
 	}
 
@@ -120,7 +131,10 @@ public class VigilanteServiceTest {
 		// Arrange
 		String mensjaeCantidadMaximaMotosExcedida = null;
 		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(vehiculoRepository.contarCantidadVehiculos(Moto.class)).thenReturn(CANTIDAD_MAXIMA_MOTOS_PERMITIDOS);
+		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(CANTIDAD_MAXIMA_MOTOS_PERMITIDOS);
+		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+				.thenReturn(new String[] { StringUtils.EMPTY });
+		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaMotos))
@@ -133,7 +147,9 @@ public class VigilanteServiceTest {
 		}
 		// Assert
 		assertEquals(ExceptionConstants.MSG_CANTIDAD_MAXIMA_VEHICULOS, mensjaeCantidadMaximaMotosExcedida);
-		verify(vehiculoRepository).contarCantidadVehiculos(Moto.class);
+		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
+		verify(context).getBean(Matchers.any(String.class));
+		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaMotos);
 	}
 
@@ -142,7 +158,10 @@ public class VigilanteServiceTest {
 		// Arrange
 		String mensjaePlacaNoPermitida = null;
 		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(vehiculoRepository.contarCantidadVehiculos(Moto.class)).thenReturn(BigDecimal.ZERO.longValue());
+		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+				.thenReturn(new String[] { StringUtils.EMPTY });
+		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaMotos))
@@ -158,7 +177,9 @@ public class VigilanteServiceTest {
 		}
 		// Assert
 		assertEquals(ExceptionConstants.MSG_PLACA_NO_PERMITIDA_ESTE_DIA, mensjaePlacaNoPermitida);
-		verify(vehiculoRepository).contarCantidadVehiculos(Moto.class);
+		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
+		verify(context).getBean(Matchers.any(String.class));
+		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaMotos);
 		verify(placaValidator).validate(moto.getPlaca());
 	}
@@ -167,7 +188,10 @@ public class VigilanteServiceTest {
 	public void registarEntradaMotoOkTest() {
 		// Arrange
 		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(vehiculoRepository.contarCantidadVehiculos(Moto.class)).thenReturn(BigDecimal.ZERO.longValue());
+		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+				.thenReturn(new String[] { StringUtils.EMPTY });
+		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaMotos))
@@ -183,7 +207,9 @@ public class VigilanteServiceTest {
 		boolean registroGuardado = registroPersistent != null && registroPersistent.getId() != null;
 		// Assert
 		assertTrue(registroGuardado);
-		verify(vehiculoRepository).contarCantidadVehiculos(Moto.class);
+		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
+		verify(context).getBean(Matchers.any(String.class));
+		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaMotos);
 		verify(placaValidator).validate(moto.getPlaca());
 		verify(dateProvider).getCurrentLocalDateTime();
@@ -194,7 +220,10 @@ public class VigilanteServiceTest {
 	public void registarEntradaCarroOkTest() {
 		// Arrange
 		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(vehiculoRepository.contarCantidadVehiculos(Carro.class)).thenReturn(BigDecimal.ZERO.longValue());
+		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+				.thenReturn(new String[] { StringUtils.EMPTY });
+		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaCarros = PropiedadUtil.getClaveConComodin(Carro.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaCarros))
@@ -210,7 +239,9 @@ public class VigilanteServiceTest {
 		boolean registroGuardado = registroPersistent != null && registroPersistent.getId() != null;
 		// Assert
 		assertTrue(registroGuardado);
-		verify(vehiculoRepository).contarCantidadVehiculos(Carro.class);
+		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
+		verify(context).getBean(Matchers.any(String.class));
+		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaCarros);
 		verify(placaValidator).validate(carro.getPlaca());
 		verify(registroRepository).save(registro);
@@ -237,8 +268,7 @@ public class VigilanteServiceTest {
 		assertEquals(VALOR_DIA_MOTO.compareTo(valor), BigDecimal.ZERO.intValue());
 		verify(propiedadService).getPropertyAsBigDecimal(claveValorDia);
 		verify(propiedadService).getPropertyAsBigDecimal(claveValorHora);
-		verify(calculadorTiempoService).calcularTiempo(FECHA_INICIO_COBRO_NUEVE_HORAS,
-				FECHA_FIN_COBRO_NUEVE_HORAS);
+		verify(calculadorTiempoService).calcularTiempo(FECHA_INICIO_COBRO_NUEVE_HORAS, FECHA_FIN_COBRO_NUEVE_HORAS);
 		verify(motoSurchargeStrategy).canApply(moto);
 	}
 

@@ -5,9 +5,10 @@ import org.springframework.stereotype.Component;
 
 import co.com.ceiba.parqueadero.domain.dto.MotoDTO;
 import co.com.ceiba.parqueadero.domain.model.Moto;
+import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 
 @Component
-public class MotoConverter implements Converter<MotoDTO, Moto> {
+public class MotoConverter implements Converter<MotoDTO, Vehiculo> {
 
 	@Override
 	public Moto convert(MotoDTO motoDTO) {

@@ -2,7 +2,6 @@ package co.com.ceiba.parqueadero.repository;
 
 import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 
-public interface VehiculoCustomRepository {
+public interface VehiculoCustomRepository extends AbstractVehiculoCustomRepository<Vehiculo>{
 
-	public Long contarCantidadVehiculos(Class<? extends Vehiculo> tipoVehiculo);
 }

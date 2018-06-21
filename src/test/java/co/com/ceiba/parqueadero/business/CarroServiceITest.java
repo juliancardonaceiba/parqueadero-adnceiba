@@ -30,7 +30,7 @@ public class CarroServiceITest {
 		boolean mensajePlacaEsRequerida = Boolean.FALSE;
 		// Act
 		try {
-			carroService.getVehiculo(null);
+			carroService.getVehiculoPorPlaca(null);
 		} catch (BusinessException e) {
 			mensajePlacaEsRequerida = ExceptionConstants.MSG_PLACA_ES_REQUERIDA.equals(e.getMessage());
 		}

@@ -6,6 +6,6 @@ import co.com.ceiba.parqueadero.business.CarroService;
 import co.com.ceiba.parqueadero.domain.model.Carro;
 
 @Service
-public class CarroServiceImpl extends VehiculoServiceImpl<Carro> implements CarroService {
+public class CarroServiceImpl extends EditVehiculoServiceImpl<Carro> implements CarroService {
 
 }

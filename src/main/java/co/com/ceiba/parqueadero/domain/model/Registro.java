@@ -38,11 +38,11 @@ public class Registro implements Serializable {
 		}
 	}
 
-	public static final class EntityInfo {
+	public static final class ClassInfo {
 
 		public static final String VEHICULO_NAME = "vehiculo";
 
-		private EntityInfo() {
+		private ClassInfo() {
 		}
 	}
 

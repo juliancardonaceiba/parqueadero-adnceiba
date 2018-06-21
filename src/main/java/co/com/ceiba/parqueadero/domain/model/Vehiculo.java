@@ -78,7 +78,7 @@ public abstract class Vehiculo implements Serializable {
 	}
 
 	@JsonIgnore
-	@OneToMany(mappedBy = Registro.EntityInfo.VEHICULO_NAME, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = Registro.ClassInfo.VEHICULO_NAME, fetch = FetchType.LAZY)
 	public List<Registro> getRegistros() {
 		return registros;
 	}

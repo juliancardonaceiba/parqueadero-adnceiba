@@ -29,7 +29,7 @@ public class MotoServiceITest {
 		boolean mensajePlacaEsRequerida = Boolean.FALSE;
 		// Act
 		try {
-			motoService.getVehiculo(null);
+			motoService.getVehiculoPorPlaca(null);
 		} catch (BusinessException e) {
 			mensajePlacaEsRequerida = ExceptionConstants.MSG_PLACA_ES_REQUERIDA.equals(e.getMessage());
 		}

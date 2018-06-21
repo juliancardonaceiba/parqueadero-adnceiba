@@ -3,40 +3,31 @@ package co.com.ceiba.parqueadero.rest;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import co.com.ceiba.parqueadero.business.EditVehiculoService;
 import co.com.ceiba.parqueadero.business.VehiculoService;
 import co.com.ceiba.parqueadero.domain.dto.VehiculoDTO;
 import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 
-public abstract class VehiculoRestController<T extends Vehiculo, V extends VehiculoDTO> {
+@RestController
+@RequestMapping("/vehiculos")
+public class VehiculoRestController {
 
-	private VehiculoService<T> vehiculoService;
+	private ApplicationContext context;
 
 	private ConversionService conversionService;
 
-	private Class<T> entityClass;
-
-	private Class<V> dtoClass;
-
-	public VehiculoRestController(Class<T> entityClass, Class<V> dtoClass) {
-		this.entityClass = entityClass;
-		this.dtoClass = dtoClass;
-	}
-
-	protected VehiculoService<T> getVehiculoService() {
-		return vehiculoService;
-	}
-
-	@Autowired
-	public void setVehiculoService(VehiculoService<T> vehiculoService) {
-		this.vehiculoService = vehiculoService;
-	}
+	private VehiculoService vehiculoService;
 
 	public ConversionService getConversionService() {
 		return conversionService;
@@ -47,18 +38,35 @@ public abstract class VehiculoRestController<T extends Vehiculo, V extends Vehic
 		this.conversionService = conversionService;
 	}
 
-	public Class<T> getEntityClass() {
-		return entityClass;
+	public ApplicationContext getContext() {
+		return context;
 	}
 
-	public Class<V> getDtoClass() {
-		return dtoClass;
+	@Autowired
+	public void setContext(ApplicationContext context) {
+		this.context = context;
+	}
+
+	public VehiculoService getVehiculoService() {
+		return vehiculoService;
+	}
+
+	@Autowired
+	public void setVehiculoService(VehiculoService vehiculoService) {
+		this.vehiculoService = vehiculoService;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T extends Vehiculo> EditVehiculoService<T> getVehiculoService(Class<T> vehiculoClass) {
+		String[] beanNamesForType = getContext().getBeanNamesForType(
+				ResolvableType.forClassWithGenerics(EditVehiculoService.class, vehiculoClass));
+		return (EditVehiculoService<T>) getContext().getBean(beanNamesForType[0]);
 	}
 
 	@GetMapping("/{placa}")
 	@ResponseBody
 	public Optional<VehiculoDTO> getVehiculo(@PathVariable("placa") String placa) {
-		Optional<Vehiculo> vehiculoOptional = getVehiculoService().getVehiculo(placa);
+		Optional<Vehiculo> vehiculoOptional = getVehiculoService().getVehiculoPorPlaca(placa);
 		if (vehiculoOptional.isPresent()) {
 			VehiculoDTO vehiculoDTO = getConversionService().convert(vehiculoOptional.get(), VehiculoDTO.class);
 			return Optional.ofNullable(vehiculoDTO);
@@ -67,13 +75,12 @@ public abstract class VehiculoRestController<T extends Vehiculo, V extends Vehic
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@PostMapping
 	@ResponseBody
-	public V crearVehiculo(@RequestBody V vehiculo) {
-		T entity = getConversionService().convert(vehiculo, getEntityClass());
-		T nuevoVehiculo = getVehiculoService().crearVehiculo(entity);
-		VehiculoDTO vehiculoDTO = getConversionService().convert(nuevoVehiculo, VehiculoDTO.class);
-		return (V) vehiculoDTO;
+	public VehiculoDTO crearVehiculo(@RequestBody VehiculoDTO vehiculoDTO) {
+		Vehiculo vehiculo = getConversionService().convert(vehiculoDTO, Vehiculo.class);
+		Vehiculo nuevoVehiculo = getVehiculoService(vehiculo.getClass()).crearVehiculo(vehiculo);
+		return getConversionService().convert(nuevoVehiculo, VehiculoDTO.class);
 	}
+
 }

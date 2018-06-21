@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Service;
 
 import co.com.ceiba.parqueadero.business.CalculadorTiempoService;
@@ -19,15 +21,13 @@ import co.com.ceiba.parqueadero.business.validation.PicoPlacaValidator;
 import co.com.ceiba.parqueadero.domain.model.Registro;
 import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 import co.com.ceiba.parqueadero.repository.RegistroRepository;
-import co.com.ceiba.parqueadero.repository.VehiculoRepository;
+import co.com.ceiba.parqueadero.repository.AbstractVehiculoRepository;
 import co.com.ceiba.parqueadero.util.DateProvider;
 import co.com.ceiba.parqueadero.util.PropiedadConstants;
 import co.com.ceiba.parqueadero.util.PropiedadUtil;
 
 @Service
 public class VigilanteServiceImpl implements VigilanteService {
-
-	private VehiculoRepository vehiculoRepository;
 
 	private PropiedadService propiedadService;
 
@@ -40,14 +40,22 @@ public class VigilanteServiceImpl implements VigilanteService {
 	private CalculadorTiempoService calculadorTiempoService;
 
 	private List<SurchargeStrategy> surchargeStrategies;
+	
+	private ApplicationContext context;
 
-	protected VehiculoRepository getVehiculoRepository() {
-		return vehiculoRepository;
+	public ApplicationContext getContext() {
+		return context;
 	}
 
 	@Autowired
-	public void setVehiculoRepository(VehiculoRepository vehiculoRepository) {
-		this.vehiculoRepository = vehiculoRepository;
+	public void setContext(ApplicationContext context) {
+		this.context = context;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T extends Vehiculo>AbstractVehiculoRepository<T> getVehiculoRepository(Class<T> vehiculoClass) {
+		String[] beanNamesForType = getContext().getBeanNamesForType(ResolvableType.forClassWithGenerics(AbstractVehiculoRepository.class, vehiculoClass));
+		return (AbstractVehiculoRepository<T>) getContext().getBean(beanNamesForType[0]);
 	}
 
 	protected RegistroRepository getRegistroRepository() {
@@ -115,7 +123,7 @@ public class VigilanteServiceImpl implements VigilanteService {
 			throw new BusinessException(ExceptionConstants.MSG_VEHICULO_YA_ESTA_ADENTRO);
 		});
 
-		Long cantidadVehiculos = getVehiculoRepository().contarCantidadVehiculos(vehiculo.getClass());
+		Long cantidadVehiculos = getVehiculoRepository(vehiculo.getClass()).getCantidadVehiculosRegistrados();
 		String claveCantidadMaximaVehiculo = PropiedadUtil.getClaveConComodin(
 				vehiculo.getClass().getSimpleName().toLowerCase(), PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		Integer cantidadMaximaPermitidad = getPropiedadService().getPropertyAsInt(claveCantidadMaximaVehiculo);

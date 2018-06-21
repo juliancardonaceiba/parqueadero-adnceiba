@@ -50,10 +50,10 @@ public class VigilanteServiceITest {
 	private VigilanteService vigilanteService;
 
 	@Autowired
-	private VehiculoService<Carro> carroService;
+	private EditVehiculoService<Carro> carroService;
 
 	@Autowired
-	private VehiculoService<Moto> motoService;
+	private EditVehiculoService<Moto> motoService;
 
 	@Autowired
 	private RecargoRepository recargoRepository;

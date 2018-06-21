@@ -22,14 +22,14 @@ import co.com.ceiba.parqueadero.business.validation.VehiculoValidator;
 import co.com.ceiba.parqueadero.domain.model.Moto;
 import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 import co.com.ceiba.parqueadero.domain.model.builder.MotoTestDataBuilder;
-import co.com.ceiba.parqueadero.repository.VehiculoRepository;
+import co.com.ceiba.parqueadero.repository.AbstractVehiculoRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class MotoServiceTest {
 
 	@Mock
-	private VehiculoRepository vehiculoRepository;
+	private AbstractVehiculoRepository vehiculoRepository;
 
 	@Mock
 	private VehiculoValidator<Moto> vehiculoValidator;
@@ -43,7 +43,7 @@ public class MotoServiceTest {
 		boolean mensajePlacaEsRequerida = Boolean.FALSE;
 		// Act
 		try {
-			motoService.getVehiculo(null);
+			motoService.getVehiculoPorPlaca(null);
 		} catch (BusinessException e) {
 			mensajePlacaEsRequerida = ExceptionConstants.MSG_PLACA_ES_REQUERIDA.equals(e.getMessage());
 		}
@@ -57,7 +57,7 @@ public class MotoServiceTest {
 		Moto moto = new MotoTestDataBuilder().build();
 		when(vehiculoRepository.findByPlaca(MotoTestDataBuilder.PLACA_DEFAULT)).thenReturn(Optional.ofNullable(moto));
 		// Act
-		Optional<Vehiculo> vehiculo = motoService.getVehiculo(MotoTestDataBuilder.PLACA_DEFAULT);
+		Optional<Moto> vehiculo = motoService.getVehiculoPorPlaca(MotoTestDataBuilder.PLACA_DEFAULT);
 		// Assert
 		boolean vehiculoExiste = vehiculo.isPresent()
 				&& MotoTestDataBuilder.PLACA_DEFAULT.equals(vehiculo.get().getPlaca());
