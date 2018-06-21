@@ -7,4 +7,6 @@ import co.com.ceiba.parqueadero.domain.model.Registro;
 public interface RegistroCustomRepository {
 
 	public List<Registro> getRegistrosEntrada();
+	
+	public List<Registro> getRegistrosHistoricos();
 }

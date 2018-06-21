@@ -41,4 +41,15 @@ public class RegistroCustomRepositoryImpl implements RegistroCustomRepository {
 		return typedQuery.getResultList();
 	}
 
+	@Override
+	public List<Registro> getRegistrosHistoricos() {
+		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		CriteriaQuery<Registro> criteriaQuery = criteriaBuilder.createQuery(Registro.class);
+		Root<Registro> rootEntity = criteriaQuery.from(Registro.class);
+		rootEntity.fetch(Registro_.vehiculo);
+		criteriaQuery.orderBy(criteriaBuilder.desc(rootEntity.get(Registro_.horaIngreso)));
+		TypedQuery<Registro> typedQuery = getEntityManager().createQuery(criteriaQuery);
+		return typedQuery.getResultList();
+	}
+
 }

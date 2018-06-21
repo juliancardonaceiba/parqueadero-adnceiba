@@ -181,5 +181,10 @@ public class VigilanteServiceImpl implements VigilanteService {
 	public List<Registro> getRegistrosPendientes() {
 		return getRegistroRepository().getRegistrosEntrada();
 	}
+	
+	@Override
+	public List<Registro> getRegistrosHistoricos() {
+		return getRegistroRepository().getRegistrosHistoricos();
+	}
 
 }

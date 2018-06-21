@@ -3,6 +3,12 @@ package co.com.ceiba.parqueadero.domain.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import co.com.ceiba.parqueadero.util.DateTimeConstants;
+
 public class RegistroDTO {
 
 	private Long id;
@@ -32,6 +38,8 @@ public class RegistroDTO {
 		this.id = id;
 	}
 
+	@JsonFormat(pattern = DateTimeConstants.DATE_TIME_FORMAT)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	public LocalDateTime getHoraIngreso() {
 		return horaIngreso;
 	}
@@ -40,6 +48,8 @@ public class RegistroDTO {
 		this.horaIngreso = horaIngreso;
 	}
 
+	@JsonFormat(pattern = DateTimeConstants.DATE_TIME_FORMAT)
+	@DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
 	public LocalDateTime getHoraSalida() {
 		return horaSalida;
 	}

@@ -17,4 +17,6 @@ public interface VigilanteService {
 	public BigDecimal calcularValor(Vehiculo vehiculo, LocalDateTime fechaIngreso, LocalDateTime fechaSalida);
 
 	public List<Registro> getRegistrosPendientes();
+	
+	public List<Registro> getRegistrosHistoricos();
 }

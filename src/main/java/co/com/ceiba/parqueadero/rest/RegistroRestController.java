@@ -6,11 +6,11 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.ceiba.parqueadero.business.VehiculoService;
@@ -56,15 +56,15 @@ public class RegistroRestController {
 		this.conversionService = conversionService;
 	}
 
-	@PostMapping
-	public RegistroDTO registrarEntrada(@RequestParam("placa") String placa) {
+	@RequestMapping(value = "/{placa}", method = RequestMethod.POST)
+	public RegistroDTO registrarEntrada(@PathVariable("placa") String placa) {
 		Optional<Vehiculo> vehiculo = getVehiculoService().getVehiculoPorPlaca(placa);
 		Registro registroEntrada = getVigilanteService().registrarEntrada(vehiculo.orElse(null));
 		return conversionService.convert(registroEntrada, RegistroDTO.class);
 	}
 
-	@PutMapping
-	public Optional<RegistroDTO> registrarSalida(@RequestParam("placa") String placa) {
+	@RequestMapping(value = "/{placa}", method = RequestMethod.PUT)
+	public Optional<RegistroDTO> registrarSalida(@PathVariable("placa") String placa) {
 		Optional<Vehiculo> vehiculo = getVehiculoService().getVehiculoPorPlaca(placa);
 		Optional<Registro> registroSalida = getVigilanteService().registrarSalida(vehiculo.orElse(null));
 		if (registroSalida.isPresent()) {
@@ -76,9 +76,20 @@ public class RegistroRestController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@GetMapping
-	public Collection<RegistroDTO> getRegistros() {
+	@GetMapping(value="/pendientes")
+	public Collection<RegistroDTO> getRegistrosActuales() {
 		List<Registro> registrosPendientes = getVigilanteService().getRegistrosPendientes();
-		return getConversionService().convert(registrosPendientes, Collection.class);
+		return (List<RegistroDTO>) getConversionService().convert(registrosPendientes,
+				TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Registro.class)),
+				TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(RegistroDTO.class)));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@GetMapping(value="/historico")
+	public Collection<RegistroDTO> getRegistrosHistoricos() {
+		List<Registro> registrosHistoricos = getVigilanteService().getRegistrosHistoricos();
+		return (List<RegistroDTO>) getConversionService().convert(registrosHistoricos,
+				TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(Registro.class)),
+				TypeDescriptor.collection(List.class, TypeDescriptor.valueOf(RegistroDTO.class)));
 	}
 }

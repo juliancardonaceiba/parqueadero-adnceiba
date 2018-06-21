@@ -14,13 +14,14 @@ import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
 @Configuration
 @EnableWebMvc
 public class RestConfig implements WebMvcConfigurer {
- 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
-    }
-    
-    @Bean
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+				.allowCredentials(false).maxAge(3600);
+	}
+
+	@Bean
 	public HandlerInstantiator handlerInstantiator(ApplicationContext applicationContext) {
 		return new SpringHandlerInstantiator(applicationContext.getAutowireCapableBeanFactory());
 	}
