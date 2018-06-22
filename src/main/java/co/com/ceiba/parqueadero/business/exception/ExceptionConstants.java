@@ -9,6 +9,7 @@ public class ExceptionConstants {
 	public static final String MSG_VEHICULO_YA_ESTA_ADENTRO="msg_vehiculo_ya_esta_adentro";
 	public static final String MSG_PLACA_ES_REQUERIDA="msg_placa_es_requerida";
 	public static final String MSG_CILINDRAJE_ES_REQUERIDO="msg_cilindraje_es_requerido";
+	public static final String MSG_ERROR_CONSULTANDO_TRM="msg_error_consultando_trm";
 
 	private ExceptionConstants() {
 
