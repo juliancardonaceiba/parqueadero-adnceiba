@@ -2,7 +2,6 @@ package co.com.ceiba.parqueadero.business;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -18,8 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -107,9 +106,9 @@ public class VigilanteServiceTest {
 		String mensjaecantidadMaximaCarrosExcedida = null;
 		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(CANTIDAD_MAXIMA_CARROS_PERMITIDOS);
-		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+		when(context.getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class)))
 				.thenReturn(new String[] { StringUtils.EMPTY });
-		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(context.getBean(ArgumentMatchers.any(String.class))).thenReturn(vehiculoRepository);
 		String claveCantidadMaximaCarros = PropiedadUtil.getClaveConComodin(Carro.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaCarros))
@@ -132,9 +131,9 @@ public class VigilanteServiceTest {
 		String mensjaeCantidadMaximaMotosExcedida = null;
 		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
 		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(CANTIDAD_MAXIMA_MOTOS_PERMITIDOS);
-		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+		when(context.getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class)))
 				.thenReturn(new String[] { StringUtils.EMPTY });
-		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(context.getBean(ArgumentMatchers.any(String.class))).thenReturn(vehiculoRepository);
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
 		when(propiedadService.getPropertyAsInt(claveCantidadMaximaMotos))
@@ -147,8 +146,8 @@ public class VigilanteServiceTest {
 		}
 		// Assert
 		assertEquals(ExceptionConstants.MSG_CANTIDAD_MAXIMA_VEHICULOS, mensjaeCantidadMaximaMotosExcedida);
-		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
-		verify(context).getBean(Matchers.any(String.class));
+		verify(context).getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class));
+		verify(context).getBean(ArgumentMatchers.any(String.class));
 		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaMotos);
 	}
@@ -158,9 +157,9 @@ public class VigilanteServiceTest {
 		// Arrange
 		String mensjaePlacaNoPermitida = null;
 		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+		when(context.getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class)))
 				.thenReturn(new String[] { StringUtils.EMPTY });
-		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(context.getBean(ArgumentMatchers.any(String.class))).thenReturn(vehiculoRepository);
 		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
@@ -177,8 +176,8 @@ public class VigilanteServiceTest {
 		}
 		// Assert
 		assertEquals(ExceptionConstants.MSG_PLACA_NO_PERMITIDA_ESTE_DIA, mensjaePlacaNoPermitida);
-		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
-		verify(context).getBean(Matchers.any(String.class));
+		verify(context).getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class));
+		verify(context).getBean(ArgumentMatchers.any(String.class));
 		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaMotos);
 		verify(placaValidator).validate(moto.getPlaca());
@@ -188,9 +187,9 @@ public class VigilanteServiceTest {
 	public void registarEntradaMotoOkTest() {
 		// Arrange
 		Moto moto = new MotoTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+		when(context.getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class)))
 				.thenReturn(new String[] { StringUtils.EMPTY });
-		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(context.getBean(ArgumentMatchers.any(String.class))).thenReturn(vehiculoRepository);
 		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaMotos = PropiedadUtil.getClaveConComodin(Moto.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
@@ -201,14 +200,14 @@ public class VigilanteServiceTest {
 		when(dateProvider.getCurrentLocalDateTime()).thenReturn(fechaActual);
 		Registro registro = new Registro(moto, fechaActual);
 		registro.setId(Long.MAX_VALUE);
-		when(registroRepository.save(notNull())).thenReturn(registro);
+		when(registroRepository.save(ArgumentMatchers.notNull())).thenReturn(registro);
 		// Act
 		Registro registroPersistent = vigilanteService.registrarEntrada(moto);
 		boolean registroGuardado = registroPersistent != null && registroPersistent.getId() != null;
 		// Assert
 		assertTrue(registroGuardado);
-		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
-		verify(context).getBean(Matchers.any(String.class));
+		verify(context).getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class));
+		verify(context).getBean(ArgumentMatchers.any(String.class));
 		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaMotos);
 		verify(placaValidator).validate(moto.getPlaca());
@@ -220,9 +219,9 @@ public class VigilanteServiceTest {
 	public void registarEntradaCarroOkTest() {
 		// Arrange
 		Carro carro = new CarroTestDataBuilder().withId(Long.MAX_VALUE).build();
-		when(context.getBeanNamesForType(Matchers.any(ResolvableType.class)))
+		when(context.getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class)))
 				.thenReturn(new String[] { StringUtils.EMPTY });
-		when(context.getBean(Matchers.any(String.class))).thenReturn(vehiculoRepository);
+		when(context.getBean(ArgumentMatchers.any(String.class))).thenReturn(vehiculoRepository);
 		when(vehiculoRepository.getCantidadVehiculosRegistrados()).thenReturn(BigDecimal.ZERO.longValue());
 		String claveCantidadMaximaCarros = PropiedadUtil.getClaveConComodin(Carro.class.getSimpleName().toLowerCase(),
 				PropiedadConstants.CANTIDAD_MAXIMA_VEHICULO);
@@ -233,14 +232,14 @@ public class VigilanteServiceTest {
 		when(dateProvider.getCurrentLocalDateTime()).thenReturn(fechaActual);
 		Registro registro = new Registro(carro, fechaActual);
 		registro.setId(Long.MAX_VALUE);
-		when(registroRepository.save(notNull())).thenReturn(registro);
+		when(registroRepository.save(ArgumentMatchers.notNull())).thenReturn(registro);
 		// Act
 		Registro registroPersistent = vigilanteService.registrarEntrada(carro);
 		boolean registroGuardado = registroPersistent != null && registroPersistent.getId() != null;
 		// Assert
 		assertTrue(registroGuardado);
-		verify(context).getBeanNamesForType(Matchers.any(ResolvableType.class));
-		verify(context).getBean(Matchers.any(String.class));
+		verify(context).getBeanNamesForType(ArgumentMatchers.any(ResolvableType.class));
+		verify(context).getBean(ArgumentMatchers.any(String.class));
 		verify(vehiculoRepository).getCantidadVehiculosRegistrados();
 		verify(propiedadService).getPropertyAsInt(claveCantidadMaximaCarros);
 		verify(placaValidator).validate(carro.getPlaca());

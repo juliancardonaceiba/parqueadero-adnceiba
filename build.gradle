@@ -35,9 +35,23 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.apache.commons:commons-lang3:3.7')
 	compile('com.google.guava:guava:25.1-jre')
+	
+
+    compile('org.apache.axis:axis:1.4')
+    compile('org.apache.axis:axis-jaxrpc:1.4')
+    compile('org.apache.axis:axis-saaj:1.4')
+    compile('axis:axis-wsdl4j:1.5.1')
+    compile('commons-discovery:commons-discovery:0.2')
+    
 	runtime('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('com.jayway.restassured:rest-assured:2.4.1')
+	testCompile('org.seleniumhq.selenium:selenium-java:3.12.0')
+	testCompile('org.seleniumhq.selenium:selenium-support:3.12.0')
+	testCompile("io.github.bonigarcia:webdrivermanager:1.4.1") {
+        exclude group: 'org.seleniumhq.selenium'
+    }
+    
 }
 
 metamodel {
@@ -49,6 +63,7 @@ metamodel {
 test{
  	useJUnit {
         exclude '**/*ITest.class'
+        exclude '**/*FTest.class'
     }
 	jacoco{
 		append = false

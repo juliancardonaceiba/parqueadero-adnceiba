@@ -20,7 +20,6 @@ import co.com.ceiba.parqueadero.business.exception.ExceptionConstants;
 import co.com.ceiba.parqueadero.business.impl.MotoServiceImpl;
 import co.com.ceiba.parqueadero.business.validation.VehiculoValidator;
 import co.com.ceiba.parqueadero.domain.model.Moto;
-import co.com.ceiba.parqueadero.domain.model.Vehiculo;
 import co.com.ceiba.parqueadero.domain.model.builder.MotoTestDataBuilder;
 import co.com.ceiba.parqueadero.repository.AbstractVehiculoRepository;
 
@@ -28,6 +27,7 @@ import co.com.ceiba.parqueadero.repository.AbstractVehiculoRepository;
 @SpringBootTest
 public class MotoServiceTest {
 
+	@SuppressWarnings("rawtypes")
 	@Mock
 	private AbstractVehiculoRepository vehiculoRepository;
 
