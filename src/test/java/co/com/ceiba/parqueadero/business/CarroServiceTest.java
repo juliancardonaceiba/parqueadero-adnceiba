@@ -27,6 +27,7 @@ import co.com.ceiba.parqueadero.repository.AbstractVehiculoRepository;
 @SpringBootTest
 public class CarroServiceTest {
 
+	@SuppressWarnings("rawtypes")
 	@Mock
 	private AbstractVehiculoRepository vehiculoRepository;
 
@@ -97,6 +98,7 @@ public class CarroServiceTest {
 		assertTrue(mensajePlacaEsRequerida);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void crearCarroConCarroOKTest() {
 		// Arrange

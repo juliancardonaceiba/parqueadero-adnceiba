@@ -21,12 +21,13 @@ import co.com.ceiba.parqueadero.domain.model.Moto;
 import co.com.ceiba.parqueadero.domain.model.TipoVehiculo;
 import co.com.ceiba.parqueadero.domain.model.builder.CarroTestDataBuilder;
 import co.com.ceiba.parqueadero.domain.model.builder.MotoTestDataBuilder;
+import co.com.ceiba.parqueadero.util.URLConfig;
 import io.github.bonigarcia.wdm.ChromeDriverManager;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RegistroVehiculosFTest {
 
-	private static final String APP_URL = "http://localhost:4200";
+	private static final String APP_URL = URLConfig.ANGULAR_BASE_PATH;
 	private static final String PLACA_MOTO="FPH78D";
 	private static final String PLACA_CARRO="FPH786";
 	

@@ -115,6 +115,7 @@ public class MotoServiceTest {
 		assertTrue(mensajeCilindrajeEsRequerido);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void crearMotoConMotoOKTest() {
 		// Arrange
