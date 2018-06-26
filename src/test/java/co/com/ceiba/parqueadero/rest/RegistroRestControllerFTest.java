@@ -8,6 +8,6 @@ import net.serenitybdd.cucumber.CucumberWithSerenity;
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(features = { "src/test/resources/features/parqueadero/registro_entrada_vehiculo.feature",
 		"src/test/resources/features/parqueadero/registro_salida_vehiculo.feature" })
-public class RegistroRestControllerITest {
+public class RegistroRestControllerFTest {
 
 }

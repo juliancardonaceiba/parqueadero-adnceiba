@@ -9,7 +9,7 @@ import net.serenitybdd.cucumber.CucumberWithSerenity;
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(features="src/test/resources/features/parqueadero/creacion_vehiculo.feature")
 @SpringBootTest
-public class VehiculoRestControllerITest {
+public class VehiculoRestControllerFTest {
 
 	
 	
