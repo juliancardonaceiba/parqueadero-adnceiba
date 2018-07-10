@@ -28,6 +28,8 @@ import io.github.bonigarcia.wdm.ChromeDriverManager;
 public class RegistroVehiculosFTest {
 
 	private static final String APP_URL = URLConfig.ANGULAR_BASE_PATH;
+	private static final String URL_REGISTROS_ENTRADA = "/#/registro/entrada";
+	private static final String REGISTROS_ACTUALES = "/#/administracion/actuales";
 	private static final String PLACA_MOTO="FPH78D";
 	private static final String PLACA_CARRO="FPH786";
 	
@@ -48,7 +50,7 @@ public class RegistroVehiculosFTest {
 	@Test
 	public void registrarMotoEntradaTest() {
 		// Arrange
-		webDriver.get(APP_URL + "/#/registro/entrada");
+		webDriver.get(APP_URL + URL_REGISTROS_ENTRADA);
 
 		WebElement textPlaca = webDriver.findElement(By.id("placa"));
 
@@ -78,7 +80,7 @@ public class RegistroVehiculosFTest {
 	public void registrarMotoSalidaTest() {
 		// Arrange
 		
-		webDriver.get(APP_URL + "/#/registro/entrada");
+		webDriver.get(APP_URL + URL_REGISTROS_ENTRADA);
 
 		WebElement textPlaca = webDriver.findElement(By.id("placa"));
 
@@ -97,7 +99,7 @@ public class RegistroVehiculosFTest {
 		}
 		botonRegistrar.click();
 		
-		webDriver.get(APP_URL + "/#/administracion/actuales");
+		webDriver.get(APP_URL + REGISTROS_ACTUALES);
 		new WebDriverWait(webDriver, 5000)
 				.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-registrar-salida")));
 		WebElement botonRegistrarSalida = webDriver.findElement(By.className("btn-registrar-salida"));
@@ -116,7 +118,7 @@ public class RegistroVehiculosFTest {
 	@Test
 	public void registrarCarroEntradaTest() {
 		// Arrange
-		webDriver.get(APP_URL + "/#/registro/entrada");
+		webDriver.get(APP_URL + URL_REGISTROS_ENTRADA);
 
 		WebElement textPlaca = webDriver.findElement(By.id("placa"));
 
@@ -141,7 +143,7 @@ public class RegistroVehiculosFTest {
 	@Test
 	public void registrarCarroSalidaTest() {
 		// Arrange
-		webDriver.get(APP_URL + "/#/registro/entrada");
+		webDriver.get(APP_URL + URL_REGISTROS_ENTRADA);
 
 		WebElement textPlaca = webDriver.findElement(By.id("placa"));
 
@@ -156,7 +158,7 @@ public class RegistroVehiculosFTest {
 		}
 		botonRegistrar.click();
 		
-		webDriver.get(APP_URL + "/#/administracion/actuales");
+		webDriver.get(APP_URL + REGISTROS_ACTUALES);
 		new WebDriverWait(webDriver, 5000)
 				.until(ExpectedConditions.visibilityOfElementLocated(By.className("btn-registrar-salida")));
 		WebElement botonRegistrarSalida = webDriver.findElement(By.className("btn-registrar-salida"));
